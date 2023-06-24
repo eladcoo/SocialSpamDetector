@@ -29,7 +29,7 @@ def validate_all_inputs():
     if not k_param_value:
         messagebox.showerror("Error", "Please choose how many suspected accounts to return")
         return False
-    if not table_checkbox_checked and not graph_checkbox_checked:
+    if not table_checkbox_checked.get() and not graph_checkbox_checked.get():
         messagebox.showerror("Error", "Please choose a display option")
         return False
     return True
@@ -60,9 +60,10 @@ def execute_backend():
         backend_thread.start()
 def run_scd_algorithm(path, num_of_rotations, implementation_param, k_param, display_options):
     suspect_list = run_algorithm(path, num_of_rotations, implementation_param, k_param, display_options)
-    loading_label.place_forget()
+    loading_label.grid_remove()
     loading_wheel.stop()
-    if table_checkbox_checked:
+    loading_wheel.grid_remove()
+    if table_checkbox_checked.get():
         display_as_table(suspect_list)
 
 # Create the main application window
@@ -99,8 +100,8 @@ K_param_entry.grid(row=4, column=2)
 # display modes - checkboxes
 display_label = tk.Label(window, text="Display options:")
 display_label.grid(row=5, column=1, padx=10, pady=10)
-graph_checkbox_checked = tk.IntVar()
-table_checkbox_checked = tk.IntVar()
+graph_checkbox_checked = tk.BooleanVar()
+table_checkbox_checked = tk.BooleanVar()
 
 graph_checkbox = tk.Checkbutton(window, text="Graph", variable=graph_checkbox_checked)
 graph_checkbox.grid(row=6, column=0, padx=10, pady=10)
