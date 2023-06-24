@@ -1,28 +1,53 @@
-from accountLevelDetector import extractGlobalFeatures, extractLocalFeatures
-from graph import buildTrainingGraph, buildDataGraph
-from RotatingForestAlg import trainModel, setFeaturesForRF
+from sklearn.feature_extraction import DictVectorizer
 
-def trainRFModel(num_of_rotations):
-    training_graph = buildTrainingGraph("resources/ham","resources/spam")
-    train_global_features = extractGlobalFeatures(training_graph)
-    train_local_features = extractLocalFeatures(training_graph)
+from BE.RotatingForestAlg import train_model
+from BE.accountLevelDetector import extract_global_features, extract_local_features
+from BE.communityManager import add_account_to_heap, get_max_element, heapify
+from BE.graph import build_communication_graph
+from BE.spammerCommunitiesDetector import create_communities, execute_SCD
 
-    rf_model = trainModel(training_graph,train_global_features,train_local_features,num_of_rotations)
-    return rf_model
+def run_algorithm(path, num_of_rotations, implementation_param, k_param,display_options):
 
-def runSCD(path, num_of_rotations, implementation_param, k_param,display_options):
+    print("IM HERE!")
 
-    #TODO: run scd algorithm
+    #Create commmunication graph
+    communication_graph = build_communication_graph(path)
+    communities = create_communities(communication_graph)
+    top_suspect_communities = execute_SCD(communication_graph, communities, k_param, implementation_param)
+
+    print("scd result:", top_suspect_communities)
 
     #train model
-    rf_model = trainRFModel(num_of_rotations)
-    data_graph = buildDataGraph(path)
-    data_global_features = extractGlobalFeatures(data_graph)
-    data_local_features = extractLocalFeatures(data_graph)
-    data_features = setFeaturesForRF(data_graph,data_global_features,data_local_features)
+    global_features = extract_global_features(communication_graph)
+    local_features = extract_local_features(communication_graph,communities)
 
-#   #for each community, run the ml on that community and for each account - insert the score to a max heap
-    predictions = rf_model.predict(data_features["feature_dicts"])
-    print("predictions:", predictions)
+    rf_models = train_model(communication_graph, communities, global_features, local_features, num_of_rotations)
 
+    heap = []
+    vec = DictVectorizer()
+
+    #  for each community and for each account in that community - run ML on that account and insert the score to a max heap
+    for community in top_suspect_communities:
+        level = int(community.split('-')[0])
+        community_id = int(community.split('-')[1])
+        for account in communities[level][community_id]:
+            account_feature = {}
+            account_feature.update(global_features[account])
+            account_feature.update(local_features[account][community])
+            account_feature_data = vec.fit_transform(account_feature).toarray()
+            score = rf_models[level].predict(account_feature_data)
+            print("score:", score[0])
+            add_account_to_heap(heap,account,score[0])
+
+    heapify(heap)
     #show the K most suspicious accounts
+    suspect_list = []
+    while len(suspect_list) < k_param:
+        account = get_max_element(heap)
+        if account not in suspect_list:
+            suspect_list.append(account)
+
+    print("suspect_list: ", suspect_list)
+    return suspect_list
+
+# run_algorithm('../resources/dataToTest',5,5,5,5)

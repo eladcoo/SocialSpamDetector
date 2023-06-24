@@ -1,21 +1,8 @@
-def addEdge(graph, u, v):
-    graph[u].append(v)
+def addEdge(graph, u, v, is_spam):
+    graph[u].append({'node': v, 'is_spam':is_spam})
 
-def createConnections(graph,fromAddresses,toAddresses):
+def createConnections(graph,fromAddresses,toAddresses,is_spam):
     for fromAddress in fromAddresses:
         for toAddress in toAddresses:
-            addEdge(graph, fromAddress, toAddress)
-
-# definition of function
-def generate_edges(graph):
-    edges = []
-
-    # for each node in graph
-    for node in graph:
-
-        # for each neighbour node of a single node
-        for neighbour in graph[node]:
-            # if edge exists then append
-            edges.append((node, neighbour))
-    return edges
+            addEdge(graph, fromAddress, toAddress, is_spam)
 

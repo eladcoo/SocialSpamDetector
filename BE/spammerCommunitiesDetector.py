@@ -1,51 +1,56 @@
 import community as community_louvain
 
-from communityManager import addToHeap, getMaxElement, heapify
-def createDandogram(original_graph):
+from BE.communityManager import add_account_to_heap, get_max_element, heapify
 
-    #dandogram
+
+def create_communities(original_graph):
     G = original_graph.to_undirected()
-    partition = community_louvain.best_partition(G)
-
-    # Create a list of nodes and community IDs, converting the node names to numerical IDs
-    node_to_id = {node: i for i, node in enumerate(G.nodes())}
-    # node_community = [[node_to_id[node], community_id] for node, community_id in partition.items()]
 
     # Generate the dendrogram
-    dendrogram_list = community_louvain.generate_dendrogram(G, part_init=partition)
-
+    dendrogram_list = community_louvain.generate_dendrogram(G)
+    communities = {}
     # Get the communities for all levels
     for level in range(len(dendrogram_list)):
         partition = community_louvain.partition_at_level(dendrogram_list, level)
-        communities = {}
+        communities[level] = {}
         for node, community_id in partition.items():
-            if community_id not in communities:
-                communities[community_id] = []
-            communities[community_id].append(node)
-        print(f"Level {level}: {communities}")
+            if community_id not in communities[level]:
+                communities[level][community_id] = []
+            communities[level][community_id].append(node)
+        print(f"Level {level}: {communities[level].keys()}")
 
     return communities
 
 
-def executeSCD(G,communities, k_param, implementation_param):
+def execute_SCD(G, communities, k_param, implementation_param):
     # Get the communities for all levels
     heap = []
-    for community_id in communities:
-        num_of_spammers = 0
-        for node in communities[community_id]:
-            if(G.nodes[node]['color']=='red'):
-                num_of_spammers+=1
-        print(f"community {community_id} spamminess is: { num_of_spammers/len(communities[community_id])}")
-        addToHeap(heap,community_id, num_of_spammers/len(communities[community_id]))
+    for level in communities:
+        for community_id in communities[level]:
+            community = communities[level][community_id]
+            num_of_spammers = 0
+            for node in community:
+                if(G.nodes[node]['color']=='red'):
+                    num_of_spammers+=1
+            print(f"community {community_id} spamminess is: { num_of_spammers/len(community)}")
+            add_account_to_heap(heap, f"{level}-{community_id}", num_of_spammers / len(community))
 
-    communitiesUnion = []
+    top_suspect_communities = []
+    suspect_set = []
     heapify(heap)
-    while(len(communitiesUnion)<k_param*implementation_param):
-        maxElement = getMaxElement(heap)
-        community_id = maxElement[1]
+    while(len(suspect_set)<k_param*implementation_param):
+        maxElement = get_max_element(heap)
+        community = maxElement[1]
+        level = int(community.split('-')[0])
+        community_id = int(community.split('-')[1])
         print("community_id: ",community_id)
-        print("communities[community_id]: ",communities[community_id])
-        communitiesUnion = communitiesUnion + communities[community_id]
-        print("communitiesUnion: ", communitiesUnion)
+        print("communities[community_id]: ",communities[level][community_id])
+        top_suspect_communities.append(community)
+        print("topSuspectCommunities: ", top_suspect_communities)
+        for account in communities[level][community_id]:
+            if (G.nodes[account]['color'] == 'blue'):
+                suspect_set.append(account)
+        print("suspectSet: ", suspect_set)
 
-    return communitiesUnion
+
+    return top_suspect_communities
