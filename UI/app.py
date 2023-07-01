@@ -43,6 +43,7 @@ def initiate_loading():
     loading_label.grid(row=8, column=0, columnspan=2, padx=10, pady=10)
     loading_wheel.grid(row=8, column=2, padx=10, pady=10)
     loading_wheel.start()
+    start_button['state'] = tk.DISABLED
 def execute_backend():
     if validate_all_inputs():
         path = mail_directory_entry.get()
@@ -53,16 +54,17 @@ def execute_backend():
         else:
             implementation_param = 10
         k_param = int(K_param_entry.get())
-        display_options = []
+        should_export_graph = True if graph_checkbox_checked.get() else False
         initiate_loading()
-        print("values for algorithm:", path, num_of_rotations, implementation_param, k_param, display_options)
-        backend_thread = threading.Thread(target=run_scd_algorithm, args=(path, num_of_rotations, implementation_param, k_param, display_options))
+        print("values for algorithm:", path, num_of_rotations, implementation_param, k_param, should_export_graph)
+        backend_thread = threading.Thread(target=run_scd_algorithm, args=(path, num_of_rotations, implementation_param, k_param, should_export_graph))
         backend_thread.start()
-def run_scd_algorithm(path, num_of_rotations, implementation_param, k_param, display_options):
-    suspect_list = run_algorithm(path, num_of_rotations, implementation_param, k_param, display_options)
+def run_scd_algorithm(path, num_of_rotations, implementation_param, k_param, should_export_graph):
+    suspect_list = run_algorithm(path, num_of_rotations, implementation_param, k_param, should_export_graph)
     loading_label.grid_remove()
     loading_wheel.stop()
     loading_wheel.grid_remove()
+    start_button['state'] = tk.NORMAL
     if table_checkbox_checked.get():
         display_as_table(suspect_list)
 
@@ -109,8 +111,8 @@ table_checkbox = tk.Checkbutton(window, text="Table", variable=table_checkbox_ch
 table_checkbox.grid(row=6, column=1)
 
 # Create a button widget
-button = tk.Button(window, text="Start", command=execute_backend)
-button.grid(row=7, column=0, columnspan=3, padx=10, pady=10)
+start_button = tk.Button(window, text="Start", command=execute_backend)
+start_button.grid(row=7, column=0, columnspan=3, padx=10, pady=10)
 
 # Create loading
 loading_label = ttk.Label(window, text="Loading...")

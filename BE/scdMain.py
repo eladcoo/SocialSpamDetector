@@ -3,10 +3,10 @@ from sklearn.feature_extraction import DictVectorizer
 from BE.RotatingForestAlg import train_model
 from BE.accountLevelDetector import extract_global_features, extract_local_features
 from BE.communityManager import add_account_to_heap, get_max_element, heapify
-from BE.graph import build_communication_graph
+from BE.graph import build_communication_graph, draw_graph
 from BE.spammerCommunitiesDetector import create_communities, execute_SCD
 
-def run_algorithm(path, num_of_rotations, implementation_param, k_param,display_options):
+def run_algorithm(path, num_of_rotations, implementation_param, k_param,should_export_graph):
 
     print("IM HERE!")
 
@@ -48,6 +48,10 @@ def run_algorithm(path, num_of_rotations, implementation_param, k_param,display_
             suspect_list.append(account)
 
     print("suspect_list: ", suspect_list)
+
+    if should_export_graph:
+        draw_graph(communication_graph)
+
     return suspect_list
 
 # run_algorithm('../resources/dataToTest',5,5,5,5)
