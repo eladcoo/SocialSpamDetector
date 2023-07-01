@@ -38,7 +38,8 @@ def execute_SCD(G, communities, k_param, implementation_param):
     top_suspect_communities = []
     suspect_set = []
     heapify(heap)
-    while(len(suspect_set)<k_param*implementation_param):
+    while((len(suspect_set)<k_param*implementation_param) and heap):
+        print("heap:", heap)
         maxElement = get_max_element(heap)
         community = maxElement[1]
         level = int(community.split('-')[0])

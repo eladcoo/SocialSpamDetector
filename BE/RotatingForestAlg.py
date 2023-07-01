@@ -23,24 +23,25 @@ def calculate_vector_sets(G, communities, global_features, local_features):
 
 
 def train_model(G, communities, global_features, local_features, num_of_rotations):
-    spam_vector_sets,ham_vector_sets = calculate_vector_sets(G, communities, global_features, local_features)
+    spam_vector_sets, ham_vector_sets = calculate_vector_sets(G, communities, global_features, local_features)
     vec = DictVectorizer()
     level_models = {}
     for level in communities:
-        level_vector_set = []
-        level_vector_set.extend(spam_vector_sets[level])
-        level_vector_set.extend(ham_vector_sets[level][0::len(spam_vector_sets[level])])
-        print("level_vector_set: ", level_vector_set)
+        if(len(spam_vector_sets[level])):
+            level_vector_set = []
+            level_vector_set.extend(spam_vector_sets[level])
+            level_vector_set.extend(ham_vector_sets[level][0::len(spam_vector_sets[level])])
+            print("level_vector_set: ", level_vector_set)
 
-        level_spam_labels = [1]*len(spam_vector_sets[level])
-        level_spam_labels.extend([0]*(len(level_vector_set) - len(spam_vector_sets[level])))
+            level_spam_labels = [1]*len(spam_vector_sets[level])
+            level_spam_labels.extend([0]*(len(level_vector_set) - len(spam_vector_sets[level])))
 
-        # Convert the dictionary objects to a feature matrix
-        level_data = vec.fit_transform(level_vector_set).toarray()
-        level_model = RandomForestClassifier(n_estimators=num_of_rotations)
-        level_model.fit(level_data, level_spam_labels)
+            # Convert the dictionary objects to a feature matrix
+            level_data = vec.fit_transform(level_vector_set).toarray()
+            level_model = RandomForestClassifier(n_estimators=num_of_rotations)
+            level_model.fit(level_data, level_spam_labels)
 
-        level_models[level] = level_model
+            level_models[level] = level_model
 
 
     return level_models

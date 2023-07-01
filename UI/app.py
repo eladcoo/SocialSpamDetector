@@ -10,12 +10,6 @@ def validate_input(text):
     # Check if the input consists only of digits
     return text.isdigit() or text == ""
 
-
-def validate_implementation_param(text):
-    if text:
-        return text.isdigit()
-    return True
-
 def validate_all_inputs():
     path = mail_directory_entry.get()
     if not path:
@@ -92,7 +86,7 @@ SCD_title = tk.Label(window, text="Insert SCD algorithm consts:")
 SCD_title.grid(row=2, column=1, padx=10, pady=10)
 implementation_param_label = tk.Label(window, text="α - implementation parameter: (default=10)")
 implementation_param_label.grid(row=3, column=0, columnspan=2, padx=10, pady=10)
-implementation_param_entry = tk.Entry(window, validate="key", validatecommand=(validate_implementation_param, "%P"))
+implementation_param_entry = tk.Entry(window, validate="key", validatecommand=(validate_cmd, "%P"))
 implementation_param_entry.grid(row=3, column=2)
 K_param_label = tk.Label(window, text="K - number of most suspicious accounts:", anchor="w")
 K_param_label.grid(row=4, column=0, columnspan=2, padx=10, pady=10)

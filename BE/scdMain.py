@@ -1,3 +1,5 @@
+import threading
+
 from sklearn.feature_extraction import DictVectorizer
 
 from BE.RotatingForestAlg import train_model
@@ -8,10 +10,15 @@ from BE.spammerCommunitiesDetector import create_communities, execute_SCD
 
 def run_algorithm(path, num_of_rotations, implementation_param, k_param,should_export_graph):
 
-    print("IM HERE!")
-
     #Create commmunication graph
     communication_graph = build_communication_graph(path)
+
+    if should_export_graph:
+        print("drawing graph")
+        # draw_graph(communication_graph)
+        graph_thread = threading.Thread(target=draw_graph,args=(communication_graph,))
+        graph_thread.start()
+
     communities = create_communities(communication_graph)
     top_suspect_communities = execute_SCD(communication_graph, communities, k_param, implementation_param)
 
@@ -42,15 +49,12 @@ def run_algorithm(path, num_of_rotations, implementation_param, k_param,should_e
     heapify(heap)
     #show the K most suspicious accounts
     suspect_list = []
-    while len(suspect_list) < k_param:
+    while (len(suspect_list) < k_param) and heap:
         account = get_max_element(heap)
         if account not in suspect_list:
             suspect_list.append(account)
 
     print("suspect_list: ", suspect_list)
-
-    if should_export_graph:
-        draw_graph(communication_graph)
 
     return suspect_list
 

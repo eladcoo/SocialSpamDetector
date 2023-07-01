@@ -6,8 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="a4fdc319-416f-47d4-b8a6-bff1ccc563f9" name="Changes" comment="WIP">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BE/RotatingForestAlg.py" beforeDir="false" afterPath="$PROJECT_DIR$/BE/RotatingForestAlg.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BE/graph.py" beforeDir="false" afterPath="$PROJECT_DIR$/BE/graph.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BE/scdMain.py" beforeDir="false" afterPath="$PROJECT_DIR$/BE/scdMain.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BE/spammerCommunitiesDetector.py" beforeDir="false" afterPath="$PROJECT_DIR$/BE/spammerCommunitiesDetector.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/UI/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/UI/app.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -189,7 +191,14 @@
       <option name="project" value="LOCAL" />
       <updated>1687623385595</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="WIP">
+      <created>1688233860009</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1688233860009</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -212,18 +221,18 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/BE/scdMain.py</url>
-          <line>17</line>
+          <line>24</line>
           <option name="timeStamp" value="77" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/BE/scdMain.py</url>
-          <line>29</line>
-          <option name="timeStamp" value="78" />
+          <line>15</line>
+          <option name="timeStamp" value="80" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/BE/scdMain.py</url>
-          <line>51</line>
-          <option name="timeStamp" value="79" />
+          <line>21</line>
+          <option name="timeStamp" value="81" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
