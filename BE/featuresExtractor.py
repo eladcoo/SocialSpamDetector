@@ -38,6 +38,4 @@ def extract_local_features(G,communities):
                     localFeatures[node] = {}
                 localFeatures[node].update({f"{level}-{community_id}":details})
 
-
-    print("localFeatures:",localFeatures)
     return localFeatures

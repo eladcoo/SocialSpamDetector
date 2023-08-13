@@ -3,7 +3,7 @@ import re
 from collections import defaultdict
 import chardet
 
-from BE.graphBuilder import createConnections
+from BE.basicGraph import createConnections
 
 list_of_spam_words = {}
 def load_spam_words():
@@ -55,32 +55,4 @@ def extract_from_dir(path):
                 num_of_invalid_files += 1
     print("num_of_invalid_files: ", num_of_invalid_files)
     return base_graph
-
-
-def is_a_spammer_node(dest_nodes):
-    is_spam = False
-    for dest_node in dest_nodes:
-        is_spam = is_spam or dest_node['is_spam']
-    return is_spam
-
-#Build graph with tags and weights
-def enrich_graph_with_content(G ,base_graph):
-    spam_node_color = {True: 'red', False: 'blue'}
-    for src_node in base_graph:
-        visited_nodes = []
-        is_spam = is_a_spammer_node(base_graph[src_node])
-        if src_node in G.nodes():
-            if is_spam:
-                G.nodes[src_node]['color'] = 'red'
-        else:
-            G.add_node(src_node, color=spam_node_color[is_spam])
-
-        for dest_node in base_graph[src_node]:
-            if dest_node not in visited_nodes:
-                count = base_graph[src_node].count(dest_node)
-                visited_nodes.append(dest_node)
-                print(src_node,",",dest_node,",",str(count))
-                if dest_node['node'] not in G.nodes():
-                    G.add_node(dest_node['node'], color='blue')
-                G.add_edge(src_node, dest_node['node'], weight=count)
 

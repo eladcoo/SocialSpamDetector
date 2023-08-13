@@ -1,18 +1,18 @@
 import threading
 
 from BE.accountLevelDetector import execute_ALD
-from BE.graph import build_communication_graph, draw_graph
+from BE.communicationGraph import build, draw
 from BE.spammerCommunitiesDetector import create_communities, execute_SCD
 
 def run_algorithm(path, num_of_rotations, implementation_param, k_param,should_export_graph):
 
     #Create commmunication graph
-    communication_graph = build_communication_graph(path)
+    communication_graph = build(path)
 
     if should_export_graph:
         print("drawing graph")
         # draw_graph(communication_graph)
-        graph_thread = threading.Thread(target=draw_graph,args=(communication_graph,))
+        graph_thread = threading.Thread(target=draw, args=(communication_graph,))
         graph_thread.start()
 
     communities = create_communities(communication_graph)
