@@ -1,43 +1,38 @@
+from sklearn.feature_extraction import DictVectorizer
+from BE.communityManager import add_account_to_heap, get_max_element, heapify
+from BE.RotatingForestAlg import train_model
+from BE.featuresExtractor import extract_global_features, extract_local_features
 
-def extract_global_features(G):
-    globalFeatures = dict()
-    for node in G.nodes():
-        num_of_sent = 0
-        num_of_recieved = 0
-        for edge in G.out_edges(node):
-            num_of_sent+=G.get_edge_data(edge[0],edge[1])["weight"]
-        for edge in G.in_edges(node):
-            num_of_recieved+=G.get_edge_data(edge[0],edge[1])["weight"]
-        details = {'global_distinct_senders':len(G.out_edges(node)),'global_distinct_recipients':len(G.in_edges(node)),
-                   'global_total_sent':num_of_sent,'global_total_received':num_of_recieved}
-        globalFeatures[node]=details
+def execute_ALD(top_suspect_communities,communities,communication_graph,num_of_rotations, k_param):
+    #train model
+    global_features = extract_global_features(communication_graph)
+    local_features = extract_local_features(communication_graph,communities)
+    rf_models = train_model(communication_graph, communities, global_features, local_features, num_of_rotations)
 
-    return globalFeatures
+    heap = []
+    vec = DictVectorizer()
 
-def extract_local_features(G,communities):
-    localFeatures = dict()
-    for level in communities:
-        for community_id in communities[level]:
-            for node in communities[level][community_id]:
-                num_of_sent = 0
-                num_of_recieved = 0
-                unique_out = 0
-                unique_in = 0
-                for edge in G.out_edges(node):
-                    if edge[1] in communities[level][community_id]:
-                        num_of_sent += G.get_edge_data(edge[0], edge[1])["weight"]
-                        unique_out+=1
-                for edge in G.in_edges(node):
-                    if edge[0] in communities[level][community_id]:
-                        num_of_recieved += G.get_edge_data(edge[0], edge[1])["weight"]
-                        unique_in+=1
+    #  for each community and for each account in that community - run ML on that account and insert the score to a max heap
+    for community in top_suspect_communities:
+        level = int(community.split('-')[0])
+        community_id = int(community.split('-')[1])
+        for account in communities[level][community_id]:
+            account_feature = {}
+            account_feature.update(global_features[account])
+            account_feature.update(local_features[account][community])
+            account_feature_data = vec.fit_transform(account_feature).toarray()
+            score = rf_models[level].predict(account_feature_data)
+            print("score:", score[0])
+            add_account_to_heap(heap,account,score[0])
 
-                details = {'local_distinct_senders':unique_out, 'local_distinct_recipients':unique_in, 'local_total_sent': num_of_sent,
-                           'local_total_received': num_of_recieved}
-                if(node not in localFeatures):
-                    localFeatures[node] = {}
-                localFeatures[node].update({f"{level}-{community_id}":details})
+    heapify(heap)
+    #show the K most suspicious accounts
+    suspect_list = []
+    while (len(suspect_list) < k_param) and heap:
+        account = get_max_element(heap)
+        if account not in suspect_list:
+            suspect_list.append(account)
 
+    print("suspect_list: ", suspect_list)
 
-    print("localFeatures:",localFeatures)
-    return localFeatures
+    return suspect_list

@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import filedialog
 from tkinter import ttk
 import threading
-from BE.scdMain import run_algorithm
+from BE.main import run_algorithm
 from UI.tableDisplay import display_as_table
 from tkinter import messagebox
 
