@@ -53,11 +53,14 @@ def execute_ALD(top_suspect_communities,communities,communication_graph,num_of_r
             if account not in suspect_list and communication_graph.nodes[account]['color'] == 'blue':
                 suspect_list.append(account)
 
+        print("num_of_early_detection: ", len(suspect_list))
+
     else:
         while (len(suspect_list) < k_param) and heap:
             score, account = get_max_element(heap)
             if account not in suspect_list:
                 suspect_list.append(account)
 
-    print("suspect_list: ", len(suspect_list))
+        print("suspect_list: ", suspect_list)
+
     return suspect_list
