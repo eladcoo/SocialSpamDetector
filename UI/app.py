@@ -23,11 +23,19 @@ def validate_all_inputs():
     if not k_param_value:
         messagebox.showerror("Error", "Please choose how many suspected accounts to return")
         return False
-    if not table_checkbox_checked.get() and not graph_checkbox_checked.get():
+    if not table_checkbox_checked.get() and not graph_checkbox_checked.get() and not stats_checkbox_checked.get():
         messagebox.showerror("Error", "Please choose a display option")
         return False
     return True
 
+def update_nonstats_checkboxes():
+    if stats_checkbox_checked.get():
+        graph_checkbox_checked.set(False)
+        table_checkbox_checked.set(False)
+
+def uncheck_stats_checkbox():
+    if graph_checkbox_checked.get() or table_checkbox_checked.get():
+        stats_checkbox_checked.set(False)
 def select_directory():
     directory = filedialog.askdirectory()
     mail_directory_entry.insert(0, directory)
@@ -49,12 +57,13 @@ def execute_backend():
             implementation_param = 10
         k_param = int(K_param_entry.get())
         should_export_graph = True if graph_checkbox_checked.get() else False
+        run_stats = True if stats_checkbox_checked.get() else False
         initiate_loading()
         print("values for algorithm:", path, num_of_rotations, implementation_param, k_param, should_export_graph)
-        backend_thread = threading.Thread(target=run_scd_algorithm, args=(path, num_of_rotations, implementation_param, k_param, should_export_graph))
+        backend_thread = threading.Thread(target=run_scd_algorithm, args=(path, num_of_rotations, implementation_param, k_param, should_export_graph, run_stats))
         backend_thread.start()
-def run_scd_algorithm(path, num_of_rotations, implementation_param, k_param, should_export_graph):
-    suspect_list = run_algorithm(path, num_of_rotations, implementation_param, k_param, should_export_graph)
+def run_scd_algorithm(path, num_of_rotations, implementation_param, k_param, should_export_graph, run_stats):
+    suspect_list = run_algorithm(path, num_of_rotations, implementation_param, k_param, should_export_graph, run_stats)
     loading_label.grid_remove()
     loading_wheel.stop()
     loading_wheel.grid_remove()
@@ -98,11 +107,14 @@ display_label = tk.Label(window, text="Display options:")
 display_label.grid(row=5, column=1, padx=10, pady=10)
 graph_checkbox_checked = tk.BooleanVar()
 table_checkbox_checked = tk.BooleanVar()
+stats_checkbox_checked = tk.BooleanVar()
 
-graph_checkbox = tk.Checkbutton(window, text="Graph", variable=graph_checkbox_checked)
+graph_checkbox = tk.Checkbutton(window, text="Graph", variable=graph_checkbox_checked, command=uncheck_stats_checkbox)
 graph_checkbox.grid(row=6, column=0, padx=10, pady=10)
-table_checkbox = tk.Checkbutton(window, text="Table", variable=table_checkbox_checked)
+table_checkbox = tk.Checkbutton(window, text="Table", variable=table_checkbox_checked, command=uncheck_stats_checkbox)
 table_checkbox.grid(row=6, column=1)
+stats_checkbox = tk.Checkbutton(window, text="Stats", variable=stats_checkbox_checked, command=update_nonstats_checkboxes)
+stats_checkbox.grid(row=6, column=2)
 
 # Create a button widget
 start_button = tk.Button(window, text="Start", command=execute_backend)

@@ -31,7 +31,6 @@ def train_model(G, communities, global_features, local_features, num_of_rotation
             level_vector_set = []
             level_vector_set.extend(spam_vector_sets[level])
             level_vector_set.extend(ham_vector_sets[level][0::len(spam_vector_sets[level])])
-            print("level_vector_set: ", level_vector_set)
 
             level_spam_labels = [1]*len(spam_vector_sets[level])
             level_spam_labels.extend([0]*(len(level_vector_set) - len(spam_vector_sets[level])))

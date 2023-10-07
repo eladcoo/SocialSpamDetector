@@ -4,7 +4,7 @@ from BE.accountLevelDetector import execute_ALD
 from BE.communicationGraph import build, draw
 from BE.spammerCommunitiesDetector import create_communities, execute_SCD
 
-def run_algorithm(path, num_of_rotations, implementation_param, k_param,should_export_graph):
+def run_algorithm(path, num_of_rotations, implementation_param, k_param,should_export_graph, run_stats):
 
     #Create commmunication graph
     communication_graph = build(path)
@@ -17,9 +17,9 @@ def run_algorithm(path, num_of_rotations, implementation_param, k_param,should_e
 
     communities = create_communities(communication_graph)
     top_suspect_communities = execute_SCD(communication_graph, communities, k_param, implementation_param)
-    print("scd result:", top_suspect_communities)
+    # print("scd result:", top_suspect_communities)
 
-    suspect_list = execute_ALD(top_suspect_communities,communities,communication_graph,num_of_rotations, k_param)
+    suspect_list = execute_ALD(top_suspect_communities,communities,communication_graph,num_of_rotations, k_param, run_stats)
     return suspect_list
 
 

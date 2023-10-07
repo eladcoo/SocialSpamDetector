@@ -17,7 +17,7 @@ def create_communities(original_graph):
             if community_id not in communities[level]:
                 communities[level][community_id] = []
             communities[level][community_id].append(node)
-        print(f"Level {level}: {communities[level].keys()}")
+        # print(f"Level {level}: {communities[level].keys()}")
 
     return communities
 
@@ -32,26 +32,20 @@ def execute_SCD(G, communities, k_param, implementation_param):
             for node in community:
                 if(G.nodes[node]['color']=='red'):
                     num_of_spammers+=1
-            print(f"community {community_id} spamminess is: { num_of_spammers/len(community)}")
+            # print(f"community {community_id} spamminess is: { num_of_spammers/len(community)}")
             add_account_to_heap(heap, f"{level}-{community_id}", num_of_spammers / len(community))
 
     top_suspect_communities = []
     suspect_set = []
     heapify(heap)
     while((len(suspect_set)<k_param*implementation_param) and heap):
-        print("heap:", heap)
         maxElement = get_max_element(heap)
         community = maxElement[1]
         level = int(community.split('-')[0])
         community_id = int(community.split('-')[1])
-        print("community_id: ",community_id)
-        print("communities[community_id]: ",communities[level][community_id])
         top_suspect_communities.append(community)
-        print("topSuspectCommunities: ", top_suspect_communities)
         for account in communities[level][community_id]:
             if (G.nodes[account]['color'] == 'blue'):
                 suspect_set.append(account)
-        print("suspectSet: ", suspect_set)
-
 
     return top_suspect_communities

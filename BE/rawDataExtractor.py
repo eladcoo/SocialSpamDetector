@@ -35,6 +35,9 @@ def extract_from_dir(path):
                     from_addresses = []
                     to_addresses = []
                     is_spam = False
+                    is_real_spam = False
+                    if "spam" in file_name:
+                        is_real_spam = True
                     for line in file:
                         line = line.rstrip()  # remove '\n' at end of line
                         # check if line contains any spam words
@@ -49,9 +52,10 @@ def extract_from_dir(path):
                         if "To:" in line and line.index("To:") == 0:
                             to_addresses = re.findall(r"[a-z0-9\.\-+_]+@[a-z0-9\.\-+_]+\.[a-z]+", line)
 
-                    createConnections(base_graph, from_addresses, to_addresses, is_spam)
-            except:
-                print("invalid file:", name)
+                    createConnections(base_graph, from_addresses, to_addresses, is_spam, is_real_spam)
+            except Exception as error:
+                print("An exception occurred:", error)
+                print("with file:", name)
                 num_of_invalid_files += 1
     print("num_of_invalid_files: ", num_of_invalid_files)
     return base_graph
