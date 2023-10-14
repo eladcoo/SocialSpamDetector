@@ -40,6 +40,7 @@ def execute_ALD(top_suspect_communities,communities,communication_graph,num_of_r
     heapify(heap)
     #show the K most suspicious accounts
     suspect_list = []
+    scored_suspect_list = []
 
     if run_stats:
         print("num_of_spammers:", num_of_spammers)
@@ -60,7 +61,8 @@ def execute_ALD(top_suspect_communities,communities,communication_graph,num_of_r
             score, account = get_max_element(heap)
             if account not in suspect_list:
                 suspect_list.append(account)
+                scored_suspect_list.append((score, account))
 
-        print("suspect_list: ", suspect_list)
+        print("scored_suspect_list: ", scored_suspect_list)
 
-    return suspect_list
+    return scored_suspect_list
