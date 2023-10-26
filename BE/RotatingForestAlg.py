@@ -26,6 +26,7 @@ def train_model(G, communities, global_features, local_features, num_of_rotation
     spam_vector_sets, ham_vector_sets = calculate_vector_sets(G, communities, global_features, local_features)
     vec = DictVectorizer()
     level_models = {}
+    # undersampling
     for level in communities:
         if(len(spam_vector_sets[level])):
             level_vector_set = []

@@ -13,10 +13,9 @@ def load_spam_words():
             list_of_spam_words[line] = True
 
 
-# Get the list of all files and directories
+# Get the list of all files and directories and build the basic graph mapping all communications
 def extract_from_dir(path):
 
-    # Create base graph and graph to be sketched
     base_graph = defaultdict(list)
     num_of_invalid_files = 0
     if not list_of_spam_words:

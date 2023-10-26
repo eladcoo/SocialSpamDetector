@@ -1,5 +1,7 @@
 list_of_real_spammers = set()
 list_of_real_hammers = set()
+
+# The spam is tagged on the edge
 def addEdge(graph, u, v, is_spam):
     graph[u].append({'node': v, 'is_spam':is_spam})
 

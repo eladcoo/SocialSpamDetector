@@ -29,13 +29,14 @@ def draw(G):
 
     print("Done drawing the graph!")
 
+# Since the spam is tagged on the edge, we need to check all th edge of the node
 def is_a_spammer_node(dest_nodes):
     is_spam = False
     for dest_node in dest_nodes:
         is_spam = is_spam or dest_node['is_spam']
     return is_spam
 
-#Build graph with tags and weights
+# Build graph with tags and weights
 def enrich_graph_with_content(G ,base_graph):
     spam_node_color = {True: 'red', False: 'blue'}
     for src_node in base_graph:
